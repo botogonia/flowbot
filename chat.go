@@ -34,8 +34,8 @@ func (c *Chat) SendMsg(rplcblMsgId int, newText string, newKbrd *Kbrd) *tgbotapi
 	return &m
 }
 
-func (c *Chat) SendText(s string) *tgbotapi.Message {
-	m := c.SendMsg(0, s, nil)
+func (c *Chat) SendText(rplcblMsgId int, s string) *tgbotapi.Message {
+	m := c.SendMsg(rplcblMsgId, s, nil)
 	return m
 }
 
@@ -57,13 +57,13 @@ func (c *Chat) WaitCallBack(msgId int, notClbAlertText string) (clb *tgbotapi.Ca
 			if clb.Message.MessageID == msgId {
 				return clb
 			}
-			c.DelMsgSleep(clb.Message.MessageID, 5)
+			c.DelMsgSleep(clb.Message.MessageID, 3)
 		}
 		if msg != nil {
-			c.DelMsgSleep(msg.MessageID, 5)
+			c.DelMsgSleep(msg.MessageID, 3)
 		}
-		m := c.SendText(notClbAlertText)
-		c.DelMsgSleep(m.MessageID, 5)
+		m := c.SendText(0, notClbAlertText)
+		c.DelMsgSleep(m.MessageID, 3)
 	}
 }
 
@@ -88,7 +88,7 @@ func (c *Chat) WaitUpdate() (msg *tgbotapi.Message, clb *tgbotapi.CallbackQuery)
 			}
 		case <-c.tic:
 			if int(time.Since(c.lastSendTime).Seconds()) >= c.bot.timeout {
-				c.SendText(c.bot.timeoutText)
+				c.SendText(0, c.bot.timeoutText)
 				c.Close()
 				runtime.Goexit()
 			}
@@ -142,13 +142,13 @@ func (c *Chat) WaitText(notTxtAlertText string) string {
 			if msg.Text != "" {
 				return msg.Text
 			}
-			c.DelMsgSleep(msg.MessageID, 5)
+			c.DelMsgSleep(msg.MessageID, 3)
 		}
 		if clb != nil {
-			c.DelMsgSleep(clb.Message.MessageID, 5)
+			c.DelMsgSleep(clb.Message.MessageID, 3)
 		}
-		m := c.SendText(notTxtAlertText)
-		c.DelMsgSleep(m.MessageID, 5)
+		m := c.SendText(0, notTxtAlertText)
+		c.DelMsgSleep(m.MessageID, 3)
 	}
 }
 
